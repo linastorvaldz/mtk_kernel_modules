@@ -9,6 +9,8 @@ ifndef TOP
     TOP := $(srctree)/..
 endif
 
+ADAPTOR_MODULE_NAME := wmt_chrdev_wifi
+
 # Force build fail on modpost warning
 KBUILD_MODPOST_FAIL_ON_WARNINGS := y
 
@@ -50,20 +52,31 @@ ccflags-y += -D MTK_WCN_WMT_STP_EXP_SYMBOL_ABSTRACT
 ccflags-y += -D CREATE_NODE_DYNAMIC=1
 
 ifeq ($(CONFIG_WLAN_DRV_BUILD_IN),y)
-$(warning $(MODULE_NAME) build-in boot.img)
-obj-y += $(MODULE_NAME).o
+$(warning $(ADAPTOR_MODULE_NAME) build-in boot.img)
+obj-y += $(ADAPTOR_MODULE_NAME).o
 else
-$(warning $(MODULE_NAME) is kernel module)
-obj-m += $(MODULE_NAME).o
+$(warning $(ADAPTOR_MODULE_NAME) is kernel module)
+obj-m += $(ADAPTOR_MODULE_NAME).o
 endif
 
 # Wi-Fi character device driver
-$(MODULE_NAME)-objs += wmt_cdev_wifi.o
+$(ADAPTOR_MODULE_NAME)-objs += wmt_cdev_wifi.o
 ifneq ($(CONFIG_MTK_CONNSYS_DEDICATED_LOG_PATH),)
-$(MODULE_NAME)-objs += fw_log_wifi.o
-$(MODULE_NAME)-objs += fw_log_ics.o
-$(MODULE_NAME)-objs += wlan_ring.o
+$(ADAPTOR_MODULE_NAME)-objs += fw_log_wifi.o
+$(ADAPTOR_MODULE_NAME)-objs += fw_log_ics.o
+$(ADAPTOR_MODULE_NAME)-objs += wlan_ring.o
 endif
 ifeq ($(CONNAC_VER), 2_0)
-$(MODULE_NAME)-objs += wifi_pwr_on.o
+$(ADAPTOR_MODULE_NAME)-objs += wifi_pwr_on.o
 endif
+
+extra_symbols := $(abspath $(O)/../vendor/mediatek/kernel_modules)/connectivity/common/Module.symvers
+
+all:
+	$(MAKE) -C $(KERNEL_SRC) M=$(M) modules $(KBUILD_OPTIONS) KBUILD_EXTRA_SYMBOLS=$(extra_symbols)
+
+modules_install:
+	$(MAKE) M=$(M) -C $(KERNEL_SRC) modules_install
+
+clean:
+	$(MAKE) -C $(KERNEL_SRC) M=$(M) clean

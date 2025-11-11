@@ -30,7 +30,7 @@
 #include <helio-dvfsrc-opp.h>
 #endif
 
-#include "precomp.h"
+#include <precomp.h>
 
 #ifdef CONFIG_WLAN_MTK_EMI
 #if KERNEL_VERSION(5, 4, 0) <= CFG80211_VERSION_CODE

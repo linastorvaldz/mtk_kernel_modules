@@ -29,13 +29,6 @@ endef
 extra_symbols := $(abspath $(O)/../vendor/mediatek/kernel_modules/connectivity/common/Module.symvers)
 extra_symbols += $(abspath $(O)/../vendor/mediatek/kernel_modules/connectivity/conninfra/Module.symvers)
 
-ifneq ($(wildcard $(abspath $(O)/../vendor/mediatek/kernel_modules/connectivity/common/Module.symvers)) ,)
-    $(info [fm_drv:Makefile] wmt ready)
-endif
-ifneq ($(wildcard $(abspath $(O)/../vendor/mediatek/kernel_modules/connectivity/conninfra/Module.symvers)) ,)
-    $(info [fm_drv:Makefile] conninfra ready)
-endif
-
 all:
 ifdef CFG_FM_CHIP_ID
 	$(info [fm_drv:Makefile] make LD = 1.0)

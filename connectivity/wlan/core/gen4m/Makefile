@@ -482,8 +482,8 @@ else
 ccflags-y += -DCFG_SUPPORT_NAN=0
 endif
 
-ifeq ($(MODULE_NAME),)
-MODULE_NAME := wlan_$(shell echo $(strip $(WLAN_CHIP_ID)) | tr A-Z a-z)_$(CONFIG_MTK_COMBO_WIFI_HIF)
+ifeq ($(GEN4M_MODULE_NAME),)
+GEN4M_MODULE_NAME := wlan_$(shell echo $(strip $(WLAN_CHIP_ID)) | tr A-Z a-z)_$(CONFIG_MTK_COMBO_WIFI_HIF)
 endif
 
 ccflags-y += -DDBG=0
@@ -538,19 +538,19 @@ ifneq ($(PLATFORM_FLAGS), )
 endif
 
 ifeq ($(CONFIG_MTK_WIFI_ONLY),$(filter $(CONFIG_MTK_WIFI_ONLY),m y))
-obj-$(CONFIG_MTK_WIFI_ONLY) += $(MODULE_NAME).o
+obj-$(CONFIG_MTK_WIFI_ONLY) += $(GEN4M_MODULE_NAME).o
 else
-obj-$(CONFIG_MTK_COMBO_WIFI) += $(MODULE_NAME).o
-#obj-y += $(MODULE_NAME).o
+obj-$(CONFIG_MTK_COMBO_WIFI) += $(GEN4M_MODULE_NAME).o
+#obj-y += $(GEN4M_MODULE_NAME).o
 endif
 
 ifeq ($(CONFIG_WLAN_DRV_BUILD_IN),y)
-$(warning $(MODULE_NAME) build-in boot.img)
-obj-y += $(MODULE_NAME).o
+$(warning $(GEN4M_MODULE_NAME) build-in boot.img)
+obj-y += $(GEN4M_MODULE_NAME).o
 ccflags-y += -DCONFIG_WLAN_DRV_BUILD_IN=1
 else
-$(warning $(MODULE_NAME) is kernel module)
-obj-m += $(MODULE_NAME).o
+$(warning $(GEN4M_MODULE_NAME) is kernel module)
+obj-m += $(GEN4M_MODULE_NAME).o
 ccflags-y += -DCONFIG_WLAN_DRV_BUILD_IN=0
 endif
 
@@ -875,7 +875,7 @@ IS_EXIST_PLAT_PRIV_C += $(wildcard $(srctree)/$(PLAT_PRIV_C))
 
 ifneq ($(strip $(IS_EXIST_PLAT_PRIV_C)),)
 PLAT_OBJS := $(PLAT_DIR)plat_priv.o
-$(MODULE_NAME)-objs  += $(PLAT_OBJS)
+$(GEN4M_MODULE_NAME)-objs  += $(PLAT_OBJS)
 endif
 endif
 
@@ -915,23 +915,35 @@ SERVICE_OBJS := $(SERVICE_DIR)agent/agent.o \
                 $(SERVICE_DIR)glue/osal/gen4m/sys_adaption_gen4m.o \
                 $(SERVICE_DIR)glue/osal/gen4m/net_adaption_gen4m.o \
                 $(SERVICE_DIR)glue/hal/gen4m/operation_gen4m.o
-$(MODULE_NAME)-objs  += $(SERVICE_OBJS)
+$(GEN4M_MODULE_NAME)-objs  += $(SERVICE_OBJS)
 $(info $$MTK_WLAN_SERVICE is [{$(SERVICE_OBJS)}])
 else
 ccflags-y += -DCONFIG_WLAN_SERVICE=0
 ccflags-y += -DCONFIG_TEST_ENGINE_OFFLOAD=0
 endif
 
-$(MODULE_NAME)-objs  += $(COMMON_OBJS)
-$(MODULE_NAME)-objs  += $(NIC_OBJS)
-$(MODULE_NAME)-objs  += $(OS_OBJS)
-$(MODULE_NAME)-objs  += $(HIF_OBJS)
-$(MODULE_NAME)-objs  += $(MGMT_OBJS)
-$(MODULE_NAME)-objs  += $(CHIPS_OBJS)
-$(MODULE_NAME)-objs  += $(SYSDVT_OBJS)
-$(MODULE_NAME)-objs  += $(NAN_OBJS)
-$(MODULE_NAME)-objs  += $(NAN_SEC_OBJS)
+$(GEN4M_MODULE_NAME)-objs  += $(COMMON_OBJS)
+$(GEN4M_MODULE_NAME)-objs  += $(NIC_OBJS)
+$(GEN4M_MODULE_NAME)-objs  += $(OS_OBJS)
+$(GEN4M_MODULE_NAME)-objs  += $(HIF_OBJS)
+$(GEN4M_MODULE_NAME)-objs  += $(MGMT_OBJS)
+$(GEN4M_MODULE_NAME)-objs  += $(CHIPS_OBJS)
+$(GEN4M_MODULE_NAME)-objs  += $(SYSDVT_OBJS)
+$(GEN4M_MODULE_NAME)-objs  += $(NAN_OBJS)
+$(GEN4M_MODULE_NAME)-objs  += $(NAN_SEC_OBJS)
 
 ifneq ($(findstring UT_TEST_MODE,$(MTK_COMBO_CHIP)),)
 include $(src)/test/ut.make
 endif
+
+extra_symbols := $(abspath $(O)/../vendor/mediatek/kernel_modules)/connectivity/common/Module.symvers
+extra_symbols += $(abspath $(O)/../vendor/mediatek/kernel_modules)/connectivity/wlan/adaptor/Module.symvers
+
+all:
+	$(MAKE) -C $(KERNEL_SRC) M=$(M) modules $(KBUILD_OPTIONS) KBUILD_EXTRA_SYMBOLS="$(extra_symbols)"
+
+modules_install:
+	$(MAKE) M=$(M) -C $(KERNEL_SRC) modules_install KBUILD_EXTRA_SYMBOLS="$(extra_symbols)"
+
+clean:
+	$(MAKE) -C $(KERNEL_SRC) M=$(M) clean
