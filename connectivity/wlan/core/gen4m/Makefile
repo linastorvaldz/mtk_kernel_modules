@@ -471,7 +471,9 @@ else
 ccflags-y += -DCFG_SUPPORT_NAN=0
 endif
 
-GEN4M_MODULE_NAME := wlan_drv_gen4m_$(WLAN_CHIP_ID)
+ifeq ($(GEN4M_MODULE_NAME),)
+GEN4M_MODULE_NAME := wlan_$(shell echo $(strip $(WLAN_CHIP_ID)) | tr A-Z a-z)_$(CONFIG_MTK_COMBO_WIFI_HIF)
+endif
 
 ccflags-y += -DDBG=0
 ccflags-y += -I$(TOP)/vendor/mediatek/kernel_modules/connectivity/wlan/core/gen4m/os -I$(TOP)/vendor/mediatek/kernel_modules/connectivity/wlan/core/gen4m/os/$(os)/include
