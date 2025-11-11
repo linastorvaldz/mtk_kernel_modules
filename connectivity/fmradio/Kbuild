@@ -1,9 +1,6 @@
 # SPDX-License-Identifier: GPL-2.0
 # Copyright (c) 2021 Mediatek Inc.
 
-CFG_FM_PLAT := mt6631_6635
-CFG_FM_CHIP_ID := 6833
-
 ###############################################################################
 # Necessary Check
 
