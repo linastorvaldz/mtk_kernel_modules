@@ -471,9 +471,7 @@ else
 ccflags-y += -DCFG_SUPPORT_NAN=0
 endif
 
-ifeq ($(GEN4M_MODULE_NAME),)
-GEN4M_MODULE_NAME := wlan_$(shell echo $(strip $(WLAN_CHIP_ID)) | tr A-Z a-z)_$(CONFIG_MTK_COMBO_WIFI_HIF)
-endif
+GEN4M_MODULE_NAME := wlan_drv_gen4m_$(WLAN_CHIP_ID)
 
 ccflags-y += -DDBG=0
 ccflags-y += -I$(src)/os -I$(src)/os/$(os)/include
