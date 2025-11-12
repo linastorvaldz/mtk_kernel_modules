@@ -4,7 +4,7 @@
 ###############################################################################
 # Necessary Check
 
-ifneq ($(AUTOCONF_H),)
+ifneq ($(wildcard $(KERNEL_OUT)/include/generated/autoconf.h),)
     ccflags-y += -imacros $(KERNEL_OUT)/include/generated/autoconf.h
 endif
 
