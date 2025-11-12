@@ -31,13 +31,13 @@
 
 #include "fw_log_wifi.h"
 #ifdef CONFIG_MTK_CONNSYS_DEDICATED_LOG_PATH
-#include "fw_log_ics.h"
+#include <fw_log_ics.h>
 #endif
 #if (CFG_ANDORID_CONNINFRA_SUPPORT == 1)
 #include "wifi_pwr_on.h"
 #else
-#include "wmt_exp.h"
-#include "stp_exp.h"
+#include <wmt_exp.h>
+#include <stp_exp.h>
 #endif
 MODULE_LICENSE("Dual BSD/GPL");
 
