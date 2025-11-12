@@ -4,8 +4,8 @@
 ###############################################################################
 # Necessary Check
 
-ifeq ($(AUTOCONF_H),)
-    $(error AUTOCONF_H is not defined)
+ifneq ($(AUTOCONF_H),)
+    ccflags-y += -imacros $(KERNEL_OUT)/include/generated/autoconf.h
 endif
 
 CONFIG_CHIP_RESET_KO_SUPPORT=n
@@ -20,7 +20,6 @@ else
 ccflags-y += -DCFG_SUPPORT_CHIP_RESET_KO=0
 endif
 
-ccflags-y += -imacros $(AUTOCONF_H)
 ccflags-y += -DCONFIG_MP_WAKEUP_SOURCE_SYSFS_STAT
 
 MODULE_NAME := btmtksdio
